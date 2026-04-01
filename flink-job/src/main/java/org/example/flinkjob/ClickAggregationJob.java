@@ -1,11 +1,11 @@
 package org.example.flinkjob;
 
-import org.example.flinkjob.function.ClickEventDeserializationSchema;
-import org.example.flinkjob.function.MetricWindowFunction;
-import org.example.flinkjob.function.MinuteAggregateFunction;
-import org.example.flinkjob.sink.ClickHouseSink;
-import org.example.sharedevents.ClickEvent;
-import org.example.sharedevents.MetricRow;
+import org.ad.flinkjob.function.ClickEventDeserializationSchema;
+import org.ad.flinkjob.function.MetricWindowFunction;
+import org.ad.flinkjob.function.MinuteAggregateFunction;
+import org.ad.flinkjob.sink.ClickHouseSink;
+import org.ad.sharedevents.ClickEvent;
+import org.ad.sharedevents.MetricRow;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -15,16 +15,30 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
+import java.io.InputStream;
 import java.time.Duration;
+import java.util.Properties;
 
 public class ClickAggregationJob {
 
     public static void main(String[] args) throws Exception {
-        final String kafkaBootstrap = getArg(args, 0, "kafka:9092");
-        final String kafkaTopic = getArg(args, 1, "ad-clicks");
-        final String clickhouseJdbcUrl = getArg(args, 2, "jdbc:clickhouse://clickhouse:8123/default");
-        final String clickhouseUser = getArg(args, 3, "****");
-        final String clickhousePassword = getArg(args, 4, "****");
+
+        Properties props = new Properties();
+        InputStream input = ClickAggregationJob.class
+                .getClassLoader()
+                .getResourceAsStream("application.properties");
+
+        if (input == null) {
+            throw new RuntimeException("application.properties not found");
+        }
+        props.load(input);
+
+        final String kafkaBootstrap = props.getProperty("kafka.bootstrap.servers");
+        final String kafkaTopic = props.getProperty("kafka.topic");
+        final String clickhouseJdbcUrl = props.getProperty("clickhouse.jdbc.url");
+        final String clickhouseUser = props.getProperty("clickhouse.user");
+        final String clickhousePassword = props.getProperty("clickhouse.password");
+
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.enableCheckpointing(30000);
 
@@ -43,18 +57,14 @@ public class ClickAggregationJob {
         DataStream<ClickEvent> events = env
                 .fromSource(source, WatermarkStrategy.noWatermarks(), "kafka-source")
                 .map(new ClickEventDeserializationSchema())
-                .assignTimestampsAndWatermarks(watermarkStrategy)
-                .name("parse-and-watermark-click-events");
+                .assignTimestampsAndWatermarks(watermarkStrategy);
 
         DataStream<MetricRow> aggregated = events
                 .keyBy(ClickEvent::getAdId)
                 .window(TumblingEventTimeWindows.of(Time.minutes(1)))
-                .aggregate(new MinuteAggregateFunction(), new MetricWindowFunction())
-                .name("aggregate-clicks-per-ad-per-minute");
+                .aggregate(new MinuteAggregateFunction(), new MetricWindowFunction());
 
-        aggregated
-                .addSink(new ClickHouseSink(clickhouseJdbcUrl, clickhouseUser, clickhousePassword))
-                .name("clickhouse-sink");
+        aggregated.addSink(new ClickHouseSink(clickhouseJdbcUrl, clickhouseUser, clickhousePassword));
 
         env.execute("ad-click-aggregation-job");
     }
@@ -65,4 +75,5 @@ public class ClickAggregationJob {
         }
         return defaultValue;
     }
+}
 }
