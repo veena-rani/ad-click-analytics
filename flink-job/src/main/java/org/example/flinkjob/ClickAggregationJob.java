@@ -23,8 +23,8 @@ public class ClickAggregationJob {
         final String kafkaBootstrap = getArg(args, 0, "kafka:9092");
         final String kafkaTopic = getArg(args, 1, "ad-clicks");
         final String clickhouseJdbcUrl = getArg(args, 2, "jdbc:clickhouse://clickhouse:8123/default");
-        final String clickhouseUser = getArg(args, 3, "vrani");
-        final String clickhousePassword = getArg(args, 4, "veena");
+        final String clickhouseUser = getArg(args, 3, "****");
+        final String clickhousePassword = getArg(args, 4, "****");
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.enableCheckpointing(30000);
 
