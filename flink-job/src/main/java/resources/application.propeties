@@ -1,0 +1,5 @@
+kafka.bootstrap.servers=kafka:9092
+kafka.topic=ad-clicks
+clickhouse.jdbc.url=jdbc:clickhouse://clickhouse:8123/default
+clickhouse.user=
+clickhouse.password=
