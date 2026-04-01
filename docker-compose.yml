@@ -53,8 +53,8 @@ services:
     image: clickhouse/clickhouse-server:24.3
     container_name: clickhouse
     environment:
-      CLICKHOUSE_USER: vrani
-      CLICKHOUSE_PASSWORD: veena
+      CLICKHOUSE_USER: ****
+      CLICKHOUSE_PASSWORD: ****
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     ports:
       - "8123:8123"
