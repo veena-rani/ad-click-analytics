@@ -1,0 +1,9 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:clickhouse://localhost:8123/default?compress=0
+    username: vrani
+    password: "veena"
+    driver-class-name: com.clickhouse.jdbc.ClickHouseDriver

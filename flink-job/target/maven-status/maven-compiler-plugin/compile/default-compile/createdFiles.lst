@@ -1,0 +1,5 @@
+org/example/flinkjob/function/MetricWindowFunction.class
+org/example/flinkjob/sink/ClickHouseSink.class
+org/example/flinkjob/function/ClickEventDeserializationSchema.class
+org/example/flinkjob/ClickAggregationJob.class
+org/example/flinkjob/function/MinuteAggregateFunction.class

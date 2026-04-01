@@ -1,0 +1,5 @@
+org/example/queryservice/QueryServiceApplication.class
+org/example/queryservice/service/MetricsQueryService.class
+org/example/queryservice/repository/ClickHouseMetricsRepository.class
+org/example/queryservice/config/ClickHouseConfig.class
+org/example/queryservice/controller/MetricsController.class

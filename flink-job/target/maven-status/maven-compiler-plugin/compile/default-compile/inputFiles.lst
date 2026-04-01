@@ -1,0 +1,5 @@
+/Users/Veena/Downloads/ad-click-aggregator/flink-job/src/main/java/org/example/flinkjob/function/ClickEventDeserializationSchema.java
+/Users/Veena/Downloads/ad-click-aggregator/flink-job/src/main/java/org/example/flinkjob/sink/ClickHouseSink.java
+/Users/Veena/Downloads/ad-click-aggregator/flink-job/src/main/java/org/example/flinkjob/function/MinuteAggregateFunction.java
+/Users/Veena/Downloads/ad-click-aggregator/flink-job/src/main/java/org/example/flinkjob/ClickAggregationJob.java
+/Users/Veena/Downloads/ad-click-aggregator/flink-job/src/main/java/org/example/flinkjob/function/MetricWindowFunction.java
